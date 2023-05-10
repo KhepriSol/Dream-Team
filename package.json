@@ -1,0 +1,21 @@
+{
+  "name": "Dream-Team",
+  "version": "1.0.0",
+  "description": "OOP",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+     "start": "node index.js",
+    "test": "jest --verbose test/*"
+  },
+
+  "dependencies": {
+    "inquirer": "^6.3.1"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
+  }
+}

@@ -1,93 +1,81 @@
-import Manager from "./lib/Manager.js";
-import Engineer from "./lib/Engineer.js";
-import Intern from "./lib/Intern.js";
-import inquirer from "inquirer";
-import path from "path";
-import fs from "fs";
-import generateTeam from "./src/template.js";
-
+const Manager = require("./lib/Manager.js");
+const Engineer = require("./lib/Engineer.js");
+const Intern = require("./lib/Intern.js");
+const inquirer = require("inquirer");
+const path = require("path");
+const fs = require("fs");
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
+const generateTeam = require("./src/template.js")
 
-const teamArray = [];
+teamArray = [];
 
-function createTeam() {
-  inquirer
-    .prompt([
-      {
-        type: "list",
-        message: "What type of employee would you like to add to your team?",
-        name: "addEmployeePrompt",
-        choices: ["Manager", "Engineer", "Intern", "No more team members are needed."]
+function runApp () {
+
+  function createTeam () {
+    inquirer.prompt([{
+      type: "list",
+      message: "What type of employee would you like to add to your team?",
+      name: "addEmployeePrompt",
+      choices: ["Manager", "Engineer", "Intern", "No more team members are needed."]
+    }]).then(function (userInput) {
+      switch(userInput.addEmployeePrompt) {
+        case "Manager":
+          addManager();
+          break;
+        case "Engineer":
+          addEngineer();
+          break;
+        case "Intern":
+          addIntern();
+          break;
+
+        default:
+          htmlBuilder();
       }
-    ])
-    .then(({ addEmployeePrompt }) => {
-      if (addEmployeePrompt === "No more team members are needed.") {
-        htmlBuilder();
-      } else {
-        addEmployee(addEmployeePrompt);
-      }
-    });
-}
-
-function addEmployee(employeeType) {
-  const questions = [
-    {
-      type: "input",
-      name: "name",
-      message: `What is the ${employeeType.toLowerCase()}'s name?`
-    },
-    {
-      type: "input",
-      name: "id",
-      message: `What is the ${employeeType.toLowerCase()}'s employee ID number?`
-    },
-    {
-      type: "input",
-      name: "email",
-      message: `What is the ${employeeType.toLowerCase()}'s email address?`
-    }
-  ];
-
-  switch (employeeType) {
-    case "Manager":
-      questions.push({
-        type: "input",
-        name: "officeNumber",
-        message: "What is the manager's office number?"
-      });
-      break;
-    case "Engineer":
-      questions.push({
-        type: "input",
-        name: "github",
-        message: "What is the engineer's GitHub username?"
-      });
-      break;
-    case "Intern":
-      questions.push({
-        type: "input",
-        name: "school",
-        message: "What school does the intern attend?"
-      });
-      break;
+    })
   }
 
-  inquirer.prompt(questions).then(answers => {
-    switch (employeeType) {
-      case "Manager":
-        teamArray.push(new Manager(answers.name, answers.id, answers.email, answers.officeNumber));
-        break;
-      case "Engineer":
-        teamArray.push(new Engineer(answers.name, answers.id, answers.email, answers.github));
-        break;
-      case "Intern":
-        teamArray.push(new Intern(answers.name, answers.id, answers.email, answers.school));
-        break;
-    }
-    createTeam();
-  });
-}
+  //Prompts to ask the person
+
+  function addManager() {
+    inquirer.prompt([
+      { type: "input", name: "managerName", message: "What is the manager's name?" },
+      { type: "input", name: "managerId", message: "What is the manager's employee ID number?" },
+      { type: "input", name: "managerEmail", message: "What is the manager's email address?" },
+      { type: "input", name: "managerOfficeNumber", message: "What is the manager's office number?" }
+    ]).then(({managerName, managerId, managerEmail, managerOfficeNumber}) => {
+      teamArray.push(new Manager(managerName, managerId, managerEmail, managerOfficeNumber));
+      createTeam();
+    });
+  }
+  
+  function addEngineer() {
+    inquirer.prompt([
+      { type: "input", name: "engineerName", message: "What is the engineer's name?" },
+      { type: "input", name: "engineerId", message: "What is the engineer's employee ID number?" },
+      { type: "input", name: "engineerEmail", message: "What is the engineer's email address?" },
+      { type: "input", name: "engineerGithub", message: "What is the engineer's GitHub username?" }
+    ]).then(({engineerName, engineerId, engineerEmail, engineerGithub}) => {
+      teamArray.push(new Engineer(engineerName, engineerId, engineerEmail, engineerGithub));
+      createTeam();
+    });
+  }
+  
+  function addIntern() {
+    inquirer.prompt([
+      { type: "input", name: "internName", message: "What is the intern's name?" },
+      { type: "input", name: "internId", message: "What is the intern's employee ID number?" },
+      { type: "input", name: "internEmail", message: "What is the intern's email address?" },
+      { type: "input", name: "internSchool", message: "What school does the intern attend?" }
+    ]).then(({internName, internId, internEmail, internSchool}) => {
+      teamArray.push(new Intern(internName, internId, internEmail, internSchool));
+      createTeam();
+    });
+  }
+  
+
+
 
 function htmlBuilder () {
     console.log("Team created!")
@@ -98,6 +86,6 @@ function htmlBuilder () {
 
 createTeam();
 
-
+}
 
 runApp();
